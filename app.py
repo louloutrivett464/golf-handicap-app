@@ -9,9 +9,9 @@ st.set_page_config(page_title="Apex Golf Suite", page_icon="⛳", layout="center
 # Initialize Cloud Connection
 from supabase import create_client
 
-# Hardcoding your direct keys to bypass the broken secrets panel completely
 SUPABASE_URL = "https://krcsvsbzryafkwwiwmfc.supabase.co"
-SUPABASE_KEY = "sb_publishable_fNawMyLys8zvJaETaiZ6AA_QLMMyYv_"
+# Paste your sb_secret_... key right here so the code has permission to write rows
+SUPABASE_KEY = "PASTE_YOUR_SB_SECRET_KEY_HERE"
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 

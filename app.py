@@ -6,12 +6,9 @@ from supabase import create_client
 st.set_page_config(page_title="Apex Golf Suite", page_icon="⛳", layout="centered")
 
 # --- MASTER DATABASE CONNECTION ---
-from supabase import create_client
-
-# --- MASTER DATABASE CONNECTION ---
 SUPABASE_URL = "https://supabase.co"
 # Paste your sb_secret_... master password key directly inside these quotes:
-SUPABASE_KEY = "sb_secret_bz4pq7NeleBfM1WU7c37yQ_vnNjNG4h"
+SUPABASE_KEY = "sb_secret_cwPvkTwg72Nw17btA-p-gQ_C91rFff8"
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
@@ -45,7 +42,7 @@ def update_user_rounds_cloud(username, rounds_list):
     }).eq("username", username).execute()
 
 
-# --- COURSE DATABASE ---
+# --- COURSE DATABASE (FULLY COMPLETED PAR ARRAYS) ---
 COURSE_DATA = {
     "basset 12 hole": {"pars": [4,3,4,3,5,4,4,4,4,4,4,5], "rating": 46.2, "slope": 115},
     "broome 9 hole": {"pars": [3,4,3,5,3,3,4,4,3], "rating": 34.5, "slope": 113},
@@ -212,7 +209,7 @@ else:
             st.success("Round successfully saved to the cloud database!")
             st.rerun()
 
-       # TAB 2: DASHBOARD WITH GAMIFIED ACHIEVEMENT BADGES
+    # TAB 2: DASHBOARD WITH GAMIFIED ACHIEVEMENT BADGES
     with tab2:
         st.header(f"Performance Stats: {display_name}")
         if not user_rounds:
@@ -239,7 +236,4 @@ else:
             st.subheader("WHS Verification Tracking Table")
             counting_indices = get_counting_rounds_indices(differentials)
             
-            # Simplified flat rendering loop to guarantee no indentation crashes
             for idx, r in enumerate(user_rounds):
-                is_counting = "🟩 (Counts)" if idx in counting_indices else "⬜ (Dropped)"
-                st.write(f"{is_counting} Round {idx+1} at {r['course'].capitalize()} -> Gross: {r['gross_score']} | Diff: {r['differential']} | Stableford: {r['stableford']} pts")

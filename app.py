@@ -237,4 +237,4 @@ else:
             st.subheader("WHS Verification Tracking Table")
             counting_indices = get_counting_rounds_indices(differentials)
             for idx, r in enumerate(user_rounds):
-                if idx in counting_indices:
+                if idx in counting_indices:    

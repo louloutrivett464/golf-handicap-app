@@ -1,22 +1,16 @@
 import streamlit as st
 import plotly.express as px
-from st_supabase_connection import SupabaseConnection
-
+from supabase import create_client
 
 # Page Setup
 st.set_page_config(page_title="Apex Golf Suite", page_icon="⛳", layout="centered")
 
-# Initialize Cloud Connection
-from supabase import create_client
-
-# Direct database connection strings
+# --- MASTER DATABASE CONNECTION ---
 SUPABASE_URL = "https://supabase.co"
-# Paste your sb_secret_... key right here as the main master password token
-SUPABASE_KEY = "sb_secret_FQ32vSArbFhnJFy2VUsETg_XEBf0XQS"
+# Paste your sb_secret_... master key directly inside these quotes:
+SUPABASE_KEY = "sb_secret_af0d-D0KIMngye7ERnHMGQ_xVkdSu6l"
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-
 
 # --- CLOUD DATABASE STORAGE FUNCTIONS ---
 def load_profiles():
@@ -215,7 +209,7 @@ else:
             st.success("Round successfully saved to the cloud database!")
             st.rerun()
 
-       # TAB 2: DASHBOARD WITH GAMIFIED ACHIEVEMENT BADGES
+    # TAB 2: DASHBOARD WITH GAMIFIED ACHIEVEMENT BADGES
     with tab2:
         st.header(f"Performance Stats: {display_name}")
         if not user_rounds:
@@ -243,7 +237,3 @@ else:
             counting_indices = get_counting_rounds_indices(differentials)
             for idx, r in enumerate(user_rounds):
                 if idx in counting_indices:
-                    st.markdown(f"🟩 **Round {idx+1} ({r['course'].capitalize()}):** Total: {r['gross_score']} | **Diff: {r['differential']}** | Points: {r['stableford']}")
-                else:
-                    st.markdown(f"⬜ Round {idx+1} ({r['course'].capitalize()}): Total: {r['gross_score']} | Diff: {r['differential']} | Points: {r['stableford']}")
-

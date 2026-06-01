@@ -1,5 +1,7 @@
- as px
+import streamlit as st
+import plotly.express as px
 from st_supabase_connection import SupabaseConnection
+
 
 # Page Setup
 st.set_page_config(page_title="Apex Golf Suite", page_icon="⛳", layout="centered")

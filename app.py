@@ -1,19 +1,19 @@
 import streamlit as st
-from supabase import create_client
+from st_supabase_connection import SupabaseConnection
 
 st.set_page_config(page_title="Golf App", layout="centered")
 st.title("⛳ Golf App Cloud Test")
 
-# --- DIRECT DATABASE CONNECTION ---
-URL = "https://supabase.co"
-KEY = "sb_secret_Now3Qzgc144fpYVlVC-alg_bhDfKzdX"
+# Initialize connection using official Streamlit Cloud Secrets parameters
+def init_connection():
+    return st.connection("supabase", type=SupabaseConnection)
 
 try:
-    supabase = create_client(URL, KEY)
+    supabase = init_connection()
 except Exception as e:
     st.error(f"Connection Setup Error: {e}")
 
-# --- SIMPLE SIMPLIFIED SIGN UP ---
+# --- SIGN UP INTERFACE ---
 st.header("🔐 Player Sign Up Test")
 name_input = st.text_input("Choose a Username:").strip().lower()
 password_input = st.text_input("Choose a Password:", type="password")
@@ -21,7 +21,6 @@ password_input = st.text_input("Choose a Password:", type="password")
 if st.button("Create Account"):
     if name_input and password_input:
         try:
-            # Directly inserts a clean row into your Supabase table
             supabase.table("golf_profiles").insert({
                 "username": name_input,
                 "password": password_input,

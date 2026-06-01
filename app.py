@@ -8,7 +8,7 @@ st.set_page_config(page_title="Apex Golf Suite", page_icon="⛳", layout="center
 # --- MASTER DATABASE CONNECTION ---
 SUPABASE_URL = "https://supabase.co"
 # Paste your sb_secret_... master password key directly inside these quotes:
-SUPABASE_KEY = "sb_secret_n6vBn4DoVPG9w2uR69cQYg_91MEyefc"
+SUPABASE_KEY = "sb_secret_vq_qCEqkPDHEg2M6EXPH8w_2oO0wvcm"
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 

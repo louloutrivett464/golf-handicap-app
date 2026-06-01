@@ -6,9 +6,12 @@ from supabase import create_client
 st.set_page_config(page_title="Apex Golf Suite", page_icon="⛳", layout="centered")
 
 # --- MASTER DATABASE CONNECTION ---
+from supabase import create_client
+
+# --- MASTER DATABASE CONNECTION ---
 SUPABASE_URL = "https://supabase.co"
-# Paste your sb_secret_... master key directly inside these quotes:
-SUPABASE_KEY = "sb_secret_af0d-D0KIMngye7ERnHMGQ_xVkdSu6l"
+# Paste your sb_secret_... master password key directly inside these quotes:
+SUPABASE_KEY = "sb_secret_bz4pq7NeleBfM1WU7c37yQ_vnNjNG4h"
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 

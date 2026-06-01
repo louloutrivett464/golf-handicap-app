@@ -210,7 +210,7 @@ else:
             st.success("Round successfully saved to the cloud database!")
             st.rerun()
 
-    # TAB 2: DASHBOARD WITH GAMIFIED ACHIEVEMENT BADGES
+       # TAB 2: DASHBOARD WITH GAMIFIED ACHIEVEMENT BADGES
     with tab2:
         st.header(f"Performance Stats: {display_name}")
         if not user_rounds:
@@ -237,4 +237,8 @@ else:
             st.subheader("WHS Verification Tracking Table")
             counting_indices = get_counting_rounds_indices(differentials)
             for idx, r in enumerate(user_rounds):
-                if idx in counting_indices:    
+                if idx in counting_indices:
+                    st.markdown(f"🟩 **Round {idx+1} ({r['course'].capitalize()}):** Total: {r['gross_score']} | **Diff: {r['differential']}** | Points: {r['stableford']}")
+                else:
+                    st.markdown(f"⬜ Round {idx+1} ({r['course'].capitalize()}): Total: {r['gross_score']} | Diff: {r['differential']} | Points: {r['stableford']}")
+

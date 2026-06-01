@@ -6,11 +6,24 @@ from supabase import create_client
 st.set_page_config(page_title="Apex Golf Suite", page_icon="⛳", layout="centered")
 
 # --- MASTER DATABASE CONNECTION ---
-SUPABASE_URL = "https://supabase.co"
-# Paste your sb_secret_... master password key directly inside these quotes:
-SUPABASE_KEY = "sb_secret__IFDhiMUrpO8N8z2Wm67WQ_UEi7F75S"
+from supabase import create_client, ClientOptions
 
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+# --- MASTER DATABASE CONNECTION ---
+SUPABASE_URL = "https://supabase.co"
+
+# 1. Keep your public key here so the client knows your app name link
+PUBLIC_KEY = "sb_publishable_fNawMyLys8zvJaETaiZ6AA_QLMMyYv_"
+
+# 2. Paste your hidden sb_secret_... key here to give the app row-writing admin power
+SECRET_KEY = "PASTE_YOUR_SB_SECRET_KEY_HERE"
+
+# This forces the client to pass the secret key as a clean bearer token under the hood
+supabase = create_client(
+    SUPABASE_URL, 
+    PUBLIC_KEY,
+    options=ClientOptions(headers={"Authorization": f"Bearer {SECRET_KEY}"}))
+
+
 
 # --- CLOUD DATABASE STORAGE FUNCTIONS ---
 def load_profiles():

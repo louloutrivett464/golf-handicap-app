@@ -15,7 +15,7 @@ SUPABASE_URL = "https://supabase.co"
 PUBLIC_KEY = "sb_publishable_fNawMyLys8zvJaETaiZ6AA_QLMMyYv_"
 
 # 2. Paste your hidden sb_secret_... key here to give the app row-writing admin power
-SECRET_KEY = "PASTE_YOUR_SB_SECRET_KEY_HERE"
+SECRET_KEY = "sb_secret_tc_ZI3ZafBSPrOvtHrs1XA_5pcf22mE"
 
 # This forces the client to pass the secret key as a clean bearer token under the hood
 supabase = create_client(

@@ -1,5 +1,4 @@
-import streamlit as st
-import plotly.express as px
+ as px
 from st_supabase_connection import SupabaseConnection
 
 # Page Setup
@@ -96,7 +95,7 @@ def get_counting_rounds_indices(differentials):
     recent_indices = list(range(max(0, roundsplayed - 20), roundsplayed))
     sorted_by_val = sorted(recent_indices, key=lambda idx: differentials[idx])
     if roundsplayed < 3: return recent_indices
-    elif roundsplayed <= 5: return [sorted_by_val[0]]
+    elif roundsplayed <= 5: return [sorted_by_val]
     elif roundsplayed >= 20: return sorted_by_val[:8]
     else:
         count = 3 if roundsplayed < 15 else 4
@@ -147,10 +146,8 @@ if name_input and password_input:
             st.sidebar.error("Incorrect password.")
     else:
         if st.sidebar.button("Create Secure Profile"):
-            # Call new cloud function to add a user to Supabase
             save_new_profile_cloud(name_input, password_input)
             st.sidebar.success("Account created in cloud database!")
-            st.preload = True
             st.rerun()
 
 if not authenticated:
@@ -199,7 +196,6 @@ else:
             diff = calculate_differential(st.session_state["live_scores"], course_select)
             stableford_pts = calculate_stableford(st.session_state["live_scores"], course_select, hc_float)
             
-            # Append new score locally first
             user_rounds.append({
                 "course": course_select,
                 "gross_score": total_live_gross,
@@ -208,7 +204,6 @@ else:
                 "hole_scores": list(st.session_state["live_scores"])
             })
             
-            # Send updated list up to Supabase
             update_user_rounds_cloud(name_input, user_rounds)
             st.success("Round successfully saved to the cloud database!")
             st.rerun()
@@ -240,3 +235,4 @@ else:
             st.subheader("WHS Verification Tracking Table")
             counting_indices = get_counting_rounds_indices(differentials)
             for idx, r in enumerate(user_rounds):
+                if idx in counting_indices:

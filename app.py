@@ -7,22 +7,15 @@ from st_supabase_connection import SupabaseConnection
 st.set_page_config(page_title="Apex Golf Suite", page_icon="⛳", layout="centered")
 
 # Initialize Cloud Connection
-from supabase import create_client, ClientOptions
+from supabase import create_client
 
-SUPABASE_URL = "https://krcsvsbzryafkwwiwmfc.supabase.co"
+# Direct database connection strings
+SUPABASE_URL = "https://supabase.co"
+# Paste your sb_secret_... key right here as the main master password token
+SUPABASE_KEY = "sb_secret_FQ32vSArbFhnJFy2VUsETg_XEBf0XQS"
 
-# 1. Provide your public publishable key here so the gateway verifies your project link
-PUBLIC_KEY = "sb_publishable_fNawMyLys8zvJaETaiZ6AA_QLMMyYv_"
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# 2. Provide your secret key here to bypass any row write restrictions cleanly
-SECRET_KEY = "sb_secret_grEWGYQy5l8xrWj3UbOi-g_8O5tp0f_"
-
-# This forces the client to use the secret key to authenticate without triggering a 401 error
-supabase = create_client(
-    SUPABASE_URL, 
-    PUBLIC_KEY,
-    options=ClientOptions(headers={"Authorization": f"Bearer {SECRET_KEY}"})
-)
 
 
 # --- CLOUD DATABASE STORAGE FUNCTIONS ---

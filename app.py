@@ -8,41 +8,28 @@ st.set_page_config(page_title="Apex Golf Suite", page_icon="⛳", layout="center
 # --- MASTER DATABASE CONNECTION ---
 SUPABASE_URL = "https://supabase.co"
 # Paste your sb_secret_... master password key directly inside these quotes:
-SUPABASE_KEY = "sb_secret_vq_qCEqkPDHEg2M6EXPH8w_2oO0wvcm"
+SUPABASE_KEY = "sb_secret__IFDhiMUrpO8N8z2Wm67WQ_UEi7F75S"
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # --- CLOUD DATABASE STORAGE FUNCTIONS ---
 def load_profiles():
-    """Fetches all player rows from the Supabase cloud table."""
     try:
         response = supabase.table("golf_profiles").select("*").execute()
         data_dict = {}
         for row in response.data:
-            data_dict[row["username"]] = {
-                "password": row["password"],
-                "rounds": row["rounds"]
-            }
+            data_dict[row["username"]] = {"password": row["password"], "rounds": row["rounds"]}
         return data_dict
     except Exception:
         return {}
 
 def save_new_profile_cloud(username, password):
-    """Inserts a brand new user row into the cloud database."""
-    supabase.table("golf_profiles").insert({
-        "username": username,
-        "password": password,
-        "rounds": []
-    }).execute()
+    supabase.table("golf_profiles").insert({"username": username, "password": password, "rounds": []}).execute()
 
 def update_user_rounds_cloud(username, rounds_list):
-    """Updates the rounds list for an existing user in the cloud database."""
-    supabase.table("golf_profiles").update({
-        "rounds": rounds_list
-    }).eq("username", username).execute()
+    supabase.table("golf_profiles").update({"rounds": rounds_list}).eq("username", username).execute()
 
-
-# --- COURSE DATABASE (FULLY COMPLETED PAR ARRAYS) ---
+# --- COURSE DATABASE ---
 COURSE_DATA = {
     "basset 12 hole": {"pars": [4,3,4,3,5,4,4,4,4,4,4,5], "rating": 46.2, "slope": 115},
     "broome 9 hole": {"pars": [3,4,3,5,3,3,4,4,3], "rating": 34.5, "slope": 113},
@@ -51,7 +38,6 @@ COURSE_DATA = {
     "ogbourne": {"pars": [4,4,4,3,4,4,4,3,5,5,4,4,4,5,3,4,3,4], "rating": 71.1, "slope": 128},
     "wragbarn": {"pars": [4,4,3,5,3,5,4,4,4,5,4,3,4,4,4,3,5,4], "rating": 71.5, "slope": 131}
 }
-
 
 # --- ENGINE MATHEMATICS ---
 def calculate_differential(score_list, course_name):
@@ -67,10 +53,8 @@ def calculate_differential(score_list, course_name):
 
 def calculate_course_handicap(handicap_index, course_name):
     course = COURSE_DATA.get(course_name)
-    if not course or handicap_index == "No rounds played":
-        return 0
-    total_par = sum(course["pars"])
-    return round(handicap_index * (course["slope"] / 113) + (course["rating"] - total_par))
+    if not course or handicap_index == "No rounds played": return 0
+    return round(handicap_index * (course["slope"] / 113) + (course["rating"] - sum(course["pars"])))
 
 def calculate_stableford(score_list, course_name, handicap_index):
     course = COURSE_DATA.get(course_name)
@@ -86,8 +70,7 @@ def calculate_stableford(score_list, course_name, handicap_index):
         allowed_strokes = base_strokes + (1 if i < extra_strokes else 0)
         net_score = gross - allowed_strokes
         points = pars[i] - net_score + 2
-        if points > 0:
-            total_points += points
+        if points > 0: total_points += points
     return total_points
 
 def get_counting_rounds_indices(differentials):
@@ -96,7 +79,7 @@ def get_counting_rounds_indices(differentials):
     recent_indices = list(range(max(0, roundsplayed - 20), roundsplayed))
     sorted_by_val = sorted(recent_indices, key=lambda idx: differentials[idx])
     if roundsplayed < 3: return recent_indices
-    elif roundsplayed <= 5: return [sorted_by_val]
+    elif roundsplayed <= 5: return [sorted_by_val[0]]
     elif roundsplayed >= 20: return sorted_by_val[:8]
     else:
         count = 3 if roundsplayed < 15 else 4
@@ -127,7 +110,6 @@ def check_achievements(user_rounds):
             badges.append(f"👑 Local King ({course.capitalize()})")
             break
     return badges
-
 
 # --- APPLICATION CONTROLLER ---
 profiles = load_profiles()
@@ -160,14 +142,9 @@ else:
     current_hc = calculate_handicap_value(differentials)
     hc_float = current_hc if isinstance(current_hc, float) else 0.0
 
-    tab1, tab2, tab3, tab4 = st.tabs([
-        "📱 Live Scorecard", 
-        "📊 Dashboard & Badges", 
-        "👥 Versus Match", 
-        "🏆 Leaderboards"
-    ])
+    tab1, tab2, tab3, tab4 = st.tabs(["📱 Live Scorecard", "📊 Dashboard & Badges", "👥 Versus Match", "🏆 Leaderboards"])
 
-    # TAB 1: LIVE INTERACTIVE DIGITAL SCORECARD
+    # TAB 1: LIVE SCORECARD
     with tab1:
         st.header("Live Round Scorecard")
         course_select = st.selectbox("Select Target Course Layout:", list(COURSE_DATA.keys()))
@@ -180,14 +157,8 @@ else:
 
         cols = st.columns(3)
         for idx, par_val in enumerate(course_pars):
-            col_target = cols[idx % 3]
-            with col_target:
-                st.session_state["live_scores"][idx] = st.number_input(
-                    f"Hole {idx+1} (Par {par_val})", 
-                    min_value=1, max_value=15, 
-                    value=st.session_state["live_scores"][idx], 
-                    key=f"hole_input_{idx}"
-                )
+            with cols[idx % 3]:
+                st.session_state["live_scores"][idx] = st.number_input(f"Hole {idx+1} (Par {par_val})", min_value=1, max_value=15, value=st.session_state["live_scores"][idx], key=f"hole_input_{idx}")
         
         st.write("---")
         total_live_gross = sum(st.session_state["live_scores"])
@@ -196,20 +167,12 @@ else:
         if st.button("Finalise and Save Live Score"):
             diff = calculate_differential(st.session_state["live_scores"], course_select)
             stableford_pts = calculate_stableford(st.session_state["live_scores"], course_select, hc_float)
-            
-            user_rounds.append({
-                "course": course_select,
-                "gross_score": total_live_gross,
-                "differential": diff,
-                "stableford": stableford_pts,
-                "hole_scores": list(st.session_state["live_scores"])
-            })
-            
+            user_rounds.append({"course": course_select, "gross_score": total_live_gross, "differential": diff, "stableford": stableford_pts, "hole_scores": list(st.session_state["live_scores"])})
             update_user_rounds_cloud(name_input, user_rounds)
             st.success("Round successfully saved to the cloud database!")
             st.rerun()
 
-    # TAB 2: DASHBOARD WITH GAMIFIED ACHIEVEMENT BADGES
+    # TAB 2: DASHBOARD
     with tab2:
         st.header(f"Performance Stats: {display_name}")
         if not user_rounds:
@@ -235,5 +198,16 @@ else:
             st.write("---")
             st.subheader("WHS Verification Tracking Table")
             counting_indices = get_counting_rounds_indices(differentials)
-            
             for idx, r in enumerate(user_rounds):
+                lbl = "🟩 (Counts)" if idx in counting_indices else "⬜ (Dropped)"
+                st.write(f"{lbl} Round {idx+1} at {r['course'].capitalize()} -> Gross: {r['gross_score']} | Diff: {r['differential']} | Stableford: {r['stableford']} pts")
+
+    # TAB 3: VERSUS CALCULATOR
+    with tab3:
+        st.header("👥 First Tee Versus Calculator")
+        competitor_options = [k.capitalize() for k in profiles.keys() if k != name_input]
+        if not competitor_options:
+            st.info("Add another player profile to activate the head-to-head match tracker feature.")
+        else:
+            comp_select = st.selectbox("Choose Opponent:", competitor_options)
+            match_course = st.selectbox("Target Play Course:", list(COURSE_DATA.keys()), key="match_course_sel")
